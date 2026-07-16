@@ -1,0 +1,6 @@
+{
+  "name": "AK Jewellers Storefront",
+  "description": "Affordable, High-Quality Customized & Personalized Jewelry online store.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

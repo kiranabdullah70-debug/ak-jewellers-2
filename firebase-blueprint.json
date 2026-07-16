@@ -1,0 +1,63 @@
+{
+  "entities": {
+    "Product": {
+      "title": "Product",
+      "description": "A jewelry product in the catalog.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "originalPrice": { "type": "number" },
+        "salePrice": { "type": "number" },
+        "description": { "type": "string" },
+        "customFieldLabel": { "type": "string" },
+        "customFieldPlaceholder": { "type": "string" },
+        "image": { "type": "string" }
+      },
+      "required": ["id", "name", "originalPrice", "salePrice", "description", "customFieldLabel", "customFieldPlaceholder", "image"]
+    },
+    "Category": {
+      "title": "Category",
+      "description": "A product category.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "label": { "type": "string" },
+        "img": { "type": "string" }
+      },
+      "required": ["id", "label", "img"]
+    },
+    "Order": {
+      "title": "Order",
+      "description": "A customer order.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "createdAt"]
+    }
+  },
+  "firestore": {
+    "products/{productId}": {
+      "schema": { "$ref": "#/entities/Product" },
+      "description": "Stores all the jewelry products."
+    },
+    "categories/{categoryId}": {
+      "schema": { "$ref": "#/entities/Category" },
+      "description": "Stores product categories."
+    },
+    "orders/{orderId}": {
+      "schema": { "$ref": "#/entities/Order" },
+      "description": "Stores customer orders."
+    },
+    "settings/{settingId}": {
+      "schema": "object",
+      "description": "Stores site configurations."
+    },
+    "mail/{mailId}": {
+      "schema": "object",
+      "description": "Stores trigger mail documents."
+    }
+  }
+}

@@ -1,0 +1,58 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isAdmin() {
+      return request.auth != null && request.auth.token.email == 'kiranabdullah70@gmail.com';
+    }
+    
+    function incoming() { return request.resource.data; }
+
+    function isValidProduct(data) {
+      return data.keys().hasAll(['id', 'name', 'originalPrice', 'salePrice', 'description', 'customFieldLabel', 'customFieldPlaceholder', 'image']) &&
+             data.id is string && data.id.size() <= 128 && data.id.matches('^[a-zA-Z0-9_\\-]+$') &&
+             data.name is string && data.name.size() <= 250 &&
+             data.originalPrice is number &&
+             data.salePrice is number &&
+             data.description is string && data.description.size() <= 5000 &&
+             data.customFieldLabel is string && data.customFieldLabel.size() <= 100 &&
+             data.customFieldPlaceholder is string && data.customFieldPlaceholder.size() <= 100 &&
+             data.image is string && data.image.size() <= 1048576 &&
+             (!('category' in data) || (data.category is string && data.category.size() <= 100)) &&
+             (!('gallery' in data) || (data.gallery is list && data.gallery.size() <= 10)) &&
+             (!('thumbnail1_url' in data) || (data.thumbnail1_url is string && data.thumbnail1_url.size() <= 1048576)) &&
+             (!('thumbnail2_url' in data) || (data.thumbnail2_url is string && data.thumbnail2_url.size() <= 1048576));
+    }
+
+    match /products/{productId} {
+      allow read: if true;
+      allow create: if isAdmin() && isValidProduct(incoming()) && incoming().id == productId;
+      allow update: if isAdmin() && isValidProduct(incoming()) && incoming().id == productId;
+      allow delete: if isAdmin();
+    }
+
+    match /orders/{orderId} {
+      allow create: if true;
+      allow get: if true;
+      allow list, update, delete: if isAdmin();
+    }
+    
+    match /categories/{categoryId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /settings/{settingId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /mail/{mailId} {
+      allow create: if true;
+      allow read, update, delete: if isAdmin();
+    }
+  }
+}
