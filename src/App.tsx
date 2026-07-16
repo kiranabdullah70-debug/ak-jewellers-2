@@ -1,50 +1,42 @@
-import React from 'react';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useState } from "react";
+import CartPage from "./pages/CartPage";
+import { CartItem } from "./types";
 
-function App() {
-  const products = [
-    {
-      id: 1,
-      name: "Sarah Name Bracelet",
-      price: "Rs. 2,499",
-      image: "https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=400"
-    },
-    {
-      id: 2,
-      name: "Butterfly Set", 
-      price: "Rs. 3,999",
-      image: "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=400"
-    },
-    {
-      id: 3,
-      name: "Chain Bracelet",
-      price: "Rs. 1,899", 
-      image: "https://images.unsplash.com/photo-1617038220319-276d3cf8f24e?w=400"
-    }
-  ];
-
+function HomePage() {
   return (
-    <div style={{fontFamily: 'Arial', background: '#fff8f0', minHeight: '100vh'}}>
-      <header style={{textAlign: 'center', padding: '30px', background: '#d4af37', color: 'white'}}>
-        <h1 style={{margin: 0}}>AK JEWELLERS</h1>
-        <p>Premium Customized Jewelry</p>
+    <div className="bg-[#fff8f0]">
+      <header className="bg-[#d4af37] text-white text-center py-8">
+        <h1 className="text-4xl font-display font-bold">AK JEWELLERS</h1>
+        <p className="mt-2">Premium Customized Jewelry - Karachi</p>
       </header>
       
-      <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px', padding: '40px'}}>
-        {products.map(p => (
-          <div key={p.id} style={{border: '1px solid #ddd', borderRadius: '10px', padding: '15px', background: 'white', textAlign: 'center'}}>
-            <img src={p.image} alt={p.name} style={{width: '100%', height: '200px', objectFit: 'cover', borderRadius: '8px'}} />
-            <h3>{p.name}</h3>
-            <p style={{color: '#d4af37', fontWeight: 'bold', fontSize: '18px'}}>{p.price}</p>
-            <button style={{background: '#d4af37', color: 'white', border: 'none', padding: '10px 20px', borderRadius: '5px', cursor: 'pointer'}}>Buy Now</button>
+      <div className="max-w-7xl mx-auto px-4 py-12 grid grid-cols-1 md:grid-cols-3 gap-8">
+        {[1,2,3].map((i) => (
+          <div key={i} className="bg-white rounded-lg shadow p-4 text-center">
+            <img src="https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=400" className="w-full h-64 object-cover rounded" />
+            <h3 className="font-bold mt-4 text-lg">Sarah Name Bracelet</h3>
+            <p className="text-[#d4af37] font-bold text-xl">Rs. 2,499</p>
+            <button className="mt-3 bg-[#d4af37] text-white px-6 py-2 rounded hover:bg-[#c09a2e]">Buy Now</button>
           </div>
         ))}
       </div>
-      
-      <footer style={{textAlign: 'center', padding: '20px', background: '#333', color: 'white'}}>
-        <p>Based in Karachi, Pakistan | Nationwide Delivery</p>
-      </footer>
     </div>
-  );
+  )
 }
 
-export default App;
+export default function App() {
+  const [cart, setCart] = useState<CartItem[]>([]);
+  
+  const removeFromCart = (id: string) => setCart(cart.filter(i => i.cartId !== id));
+  const updateQuantity = (id: string, qty: number) => setCart(cart.map(i => i.cartId === id ? {...i, quantity: qty} : i));
+
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/cart" element={<CartPage cart={cart} removeFromCart={removeFromCart} updateQuantity={updateQuantity} />} />
+      </Routes>
+    </BrowserRouter>
+  )
+}
